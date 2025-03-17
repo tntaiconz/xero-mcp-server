@@ -10,7 +10,10 @@ import { listXeroContacts, listXeroInvoices, createXeroInvoice } from './xero/to
 // Create an MCP server
 const server = new McpServer({
   name: "Xero MCP Server",
-  version: "1.0.0"
+  version: "1.0.0",
+  capabilities: {
+    tools:{}
+  }
 });
 
 // Add tool to list contacts
