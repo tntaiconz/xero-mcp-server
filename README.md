@@ -59,4 +59,4 @@ MIT
 
 ## Security
 
-Please do not commit your `.env` file or any sensitive credentials to version control. 
+Please do not commit your `.env` file or any sensitive credentials to version control.
