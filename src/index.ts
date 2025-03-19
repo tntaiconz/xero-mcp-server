@@ -3,13 +3,13 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
-import { xeroClient } from "./xero/client.js";
+import { xeroClient } from "./clients/xero-client.js";
 import { Contact, Phone } from "xero-node";
 import {
   listXeroContacts,
   listXeroInvoices,
   createXeroInvoice,
-} from "./xero/tools.js";
+} from "./tools/tools.js";
 
 // Create an MCP server
 const server = new McpServer({
@@ -25,29 +25,31 @@ server.tool(
   "list-contacts",
   {},
   async (/*_args: {}, _extra: { signal: AbortSignal }*/) => {
-    const result = await listXeroContacts();
-    if (!result.success) {
+    const response = await listXeroContacts();
+    if (response.isError) {
       return {
         content: [
           {
             type: "text" as const,
-            text: `Error listing contacts: ${result.error}`,
+            text: `Error listing contacts: ${response.error}`,
           },
         ],
       };
     }
 
+    const contacts = response.result.contacts;
+
     return {
       content: [
         {
           type: "text" as const,
-          text: `Found ${result.contacts?.length || 0} contacts:`,
+          text: `Found ${contacts?.length || 0} contacts:`,
         },
-        ...(result.contacts?.map((contact) => ({
+        ...(contacts?.map((contact) => ({
           type: "text" as const,
           text: [
             `Contact: ${contact.name}`,
-            `ID: ${contact.contactId}`,
+            `ID: ${contact.contactID}`,
             contact.firstName ? `First Name: ${contact.firstName}` : null,
             contact.lastName ? `Last Name: ${contact.lastName}` : null,
             contact.emailAddress
@@ -126,33 +128,35 @@ server.tool(
   "list-invoices",
   {},
   async (/*_args: {}, _extra: { signal: AbortSignal }*/) => {
-    const result = await listXeroInvoices();
-    if (!result.success) {
+    const response = await listXeroInvoices();
+    if (response.error !== null) {
       return {
         content: [
           {
             type: "text" as const,
-            text: `Error listing invoices: ${result.error}`,
+            text: `Error listing invoices: ${response.error}`,
           },
         ],
       };
     }
 
+    const invoices = response.result.invoices;
+
     return {
       content: [
         {
           type: "text" as const,
-          text: `Found ${result.invoices?.length || 0} invoices:`,
+          text: `Found ${invoices?.length || 0} invoices:`,
         },
-        ...(result.invoices?.map((invoice) => ({
+        ...(invoices?.map((invoice) => ({
           type: "text" as const,
           text: [
-            `Invoice: ${invoice.invoiceNumber || invoice.invoiceId}`,
+            `Invoice: ${invoice.invoiceNumber || invoice.invoiceID}`,
             invoice.reference ? `Reference: ${invoice.reference}` : null,
             `Type: ${invoice.type || "Unknown"}`,
             `Status: ${invoice.status || "Unknown"}`,
             invoice.contact
-              ? `Contact: ${invoice.contact.name} (${invoice.contact.contactId})`
+              ? `Contact: ${invoice.contact.name} (${invoice.contact.contactID})`
               : null,
             invoice.date ? `Date: ${invoice.date}` : null,
             invoice.dueDate ? `Due Date: ${invoice.dueDate}` : null,
@@ -219,7 +223,7 @@ server.tool(
             invoice.payments?.length ? "Payments:" : null,
             ...(invoice.payments?.map(
               (payment) =>
-                `  - ID: ${payment.paymentId}
+                `  - ID: ${payment.paymentID}
     Date: ${payment.date || "Unknown"}
     Amount: ${payment.amount || 0}${
       payment.reference
@@ -241,7 +245,7 @@ server.tool(
             invoice.prepayments?.length ? "Prepayments:" : null,
             ...(invoice.prepayments?.map(
               (prepayment) =>
-                `  - ID: ${prepayment.prepaymentId}
+                `  - ID: ${prepayment.prepaymentID}
     Date: ${prepayment.date || "Unknown"}${
       prepayment.reference
         ? `
@@ -252,13 +256,13 @@ server.tool(
             invoice.overpayments?.length ? "Overpayments:" : null,
             ...(invoice.overpayments?.map(
               (overpayment) =>
-                `  - ID: ${overpayment.overpaymentId}
+                `  - ID: ${overpayment.overpaymentID}
     Date: ${overpayment.date || "Unknown"}`,
             ) || []),
             invoice.creditNotes?.length ? "Credit Notes:" : null,
             ...(invoice.creditNotes?.map(
               (note) =>
-                `  - ID: ${note.creditNoteId}
+                `  - ID: ${note.creditNoteID}
     Number: ${note.creditNoteNumber || "Unknown"}${
       note.reference
         ? `
@@ -387,7 +391,7 @@ server.tool(
       taxType,
       reference,
     );
-    if (!result.success) {
+    if (result.isError) {
       return {
         content: [
           {
@@ -398,15 +402,17 @@ server.tool(
       };
     }
 
+    const invoice = result.result;
+
     return {
       content: [
         {
           type: "text" as const,
           text: `Invoice created successfully:
-- ID: ${result.invoice?.invoiceId}
-- Contact: ${result.invoice?.contact?.name}
-- Total: ${result.invoice?.total}
-- Status: ${result.invoice?.status}`,
+- ID: ${invoice?.invoiceID}
+- Contact: ${invoice?.contact?.name}
+- Total: ${invoice?.total}
+- Status: ${invoice?.status}`,
         },
       ],
     };
