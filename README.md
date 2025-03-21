@@ -31,8 +31,8 @@ To add the MCP server to Claude go to Settings > Developer > Edit config and add
 {
   "mcpServers": {
     "xero": {
-      "command": "insert-your-file-path-here/xero-mcp-server/start-server.sh",
-      "args": [],
+      "command": "npx",
+      "args": ["-y", "xero-mcp-server@latest"],
       "env": {
         "XERO_CLIENT_ID": "your_client_id_here",
         "XERO_CLIENT_SECRET": "your_client_secret_here"
