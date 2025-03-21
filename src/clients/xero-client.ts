@@ -28,7 +28,8 @@ class CustomConnectionsXeroClient extends XeroClient {
   }
 
   async getClientCredentialsToken() {
-    const scope = "accounting.transactions accounting.contacts";
+    const scope =
+      "accounting.transactions accounting.contacts accounting.settings.read";
     const credentials = Buffer.from(
       `${this.clientId}:${this.clientSecret}`,
     ).toString("base64");
