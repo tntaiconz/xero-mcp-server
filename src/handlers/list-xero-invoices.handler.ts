@@ -8,6 +8,7 @@ import { Invoices } from "xero-node";
  */
 export async function listXeroInvoices(
   page: number = 1,
+  contactIds?: string[],
 ): Promise<ToolResponse<Invoices>> {
   try {
     await xeroClient.authenticate();
@@ -19,7 +20,7 @@ export async function listXeroInvoices(
       undefined, // order
       undefined, // iDs
       undefined, // invoiceNumbers
-      undefined, // contactIDs
+      contactIds, // contactIDs
       undefined, // statuses
       page,
       false, // includeArchived
