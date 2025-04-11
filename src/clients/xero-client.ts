@@ -1,11 +1,12 @@
-import {
-  Organisation,
-  IXeroClientConfig,
-  XeroClient,
-  TokenSet,
-} from "xero-node";
-import dotenv from "dotenv";
 import axios, { AxiosError } from "axios";
+import dotenv from "dotenv";
+import {
+  IXeroClientConfig,
+  Organisation,
+  TokenSet,
+  XeroClient,
+} from "xero-node";
+
 import { ensureError } from "../helpers/ensure-error.js";
 
 dotenv.config();
@@ -89,8 +90,7 @@ class CustomConnectionsXeroClient extends MCPXeroClient {
 
   public async getClientCredentialsToken(): Promise<TokenSet> {
     const scope =
-      "accounting.transactions accounting.contacts accounting.settings accounting.reports.read accounting.transactions payroll.employees.read payroll.settings.read";
-
+      "accounting.transactions accounting.contacts accounting.settings accounting.reports.read accounting.transactions payroll.settings payroll.employees payroll.timesheets";
     const credentials = Buffer.from(
       `${this.clientId}:${this.clientSecret}`,
     ).toString("base64");
