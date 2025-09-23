@@ -127,8 +127,9 @@ class CustomConnectionsXeroClient extends MCPXeroClient {
       return response.data;
     } catch (error) {
       const axiosError = error as AxiosError;
+      const errorMessage = axiosError.response?.data ? JSON.stringify(axiosError.response.data) : axiosError.message;
       throw new Error(
-        `Failed to get Xero token: ${axiosError.response?.data || axiosError.message}`,
+        `Failed to get Xero token: ${errorMessage}`,
       );
     }
   }

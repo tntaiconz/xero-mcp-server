@@ -1,6 +1,6 @@
 {
-  "name": "@xeroapi/xero-mcp-server",
-  "version": "0.0.12",
+  "name": "xero-mcp-server-fixed-tntaiconz",
+  "version": "0.1.0",
   "description": "MCP server implementation for Xero integration",
   "license": "MIT",
   "main": "dist/index.js",
