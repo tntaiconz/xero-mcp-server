@@ -15,7 +15,7 @@ async function getContacts(page?: number): Promise<Contact[]> {
     undefined, // iDs
     page, // page
     undefined, // includeArchived
-    true, // summaryOnly
+    false, // summaryOnly
     undefined, // pageSize
     undefined, // searchTerm
     getClientHeaders(),
