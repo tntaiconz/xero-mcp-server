@@ -105,6 +105,18 @@ const ListContactsTool = CreateXeroTool(
                   return `  ${phoneType}: ${phoneNumber || 'No number'}`;
                 }).join('\n')}`
               : null,
+            // Add contact persons section
+            contact.contactPersons?.length
+              ? `People:\n${contact.contactPersons.map((person, index) => {
+                  const personLines = [
+                    person.firstName ? `First Name: ${person.firstName}` : null,
+                    person.lastName ? `Last Name: ${person.lastName}` : null,
+                    person.emailAddress ? `Email: ${person.emailAddress}` : null,
+                  ].filter(Boolean);
+                  
+                  return `Person ${index + 1}:\n${personLines.join('\n')}`;
+                }).join('\n')}`
+              : null,
             contact.hasAttachments ? "Has Attachments: Yes" : null,
             contact.hasValidationErrors ? "Has Validation Errors: Yes" : null,
           ]
